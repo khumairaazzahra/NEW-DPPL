@@ -17,8 +17,7 @@ public class DosenPortal {
     private List<Course> courses;
     private Map<String, List<String>> riwayatMap = new HashMap<>();
 
-    public DosenPortal(PortalUnifiedUI parent, String dosenName, String dosenNip,
-                       Map<String, List<StudentRecord>> kelasData, List<Course> courses) {
+    public DosenPortal(PortalUnifiedUI parent, String dosenName, String dosenNip, Map<String, List<StudentRecord>> kelasData, List<Course> courses) {
         this.parent = parent;
         this.dosenName = dosenName;
         this.dosenNip = dosenNip;
