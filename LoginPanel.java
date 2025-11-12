@@ -10,7 +10,7 @@ public class LoginPanel {
     public LoginPanel(BiConsumer<String, String> onLogin) {
         this.onLogin = onLogin;
         panel = new JPanel(new BorderLayout());
-        panel.setBackground(new Color(94, 165, 214)); 
+        panel.setBackground(new Color(94, 165, 214));
         panel.setBorder(new EmptyBorder(40, 60, 40, 60));
         init();
     }
@@ -22,13 +22,32 @@ public class LoginPanel {
         container.setPreferredSize(new Dimension(900, 500));
         container.setOpaque(true);
 
-        
+
         JPanel leftPanel = new JPanel();
         leftPanel.setBackground(new Color(210, 210, 210));
         leftPanel.setPreferredSize(new Dimension(500, 400));
         leftPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
 
+        // --- Bagian Anda untuk logo universitas (TIDAK SAYA UBAH) ---
+        ImageIcon finalLogo = null;
+        try {
+            ImageIcon logoIcon = new ImageIcon(getClass().getResource("logo_univ.jpg"));
+            Image image = logoIcon.getImage();
+            Image resizedImage = image.getScaledInstance(520, 600, Image.SCALE_SMOOTH);
+            finalLogo = new ImageIcon(resizedImage);
+        } catch (Exception e) {
+            System.err.println("Gagal memuat gambar logo: logo_univ.jpg");
+            e.printStackTrace();
+        }
+
         JLabel logoText = new JLabel("<html><div style='text-align:center;'><h1>Portal<br>Akademik</h1><p>Universitas Y</p></div></html>", SwingConstants.CENTER);
+        
+        if (finalLogo != null) {
+            logoText.setIcon(finalLogo); 
+        }
+        logoText.setVerticalTextPosition(SwingConstants.BOTTOM); 
+        logoText.setHorizontalTextPosition(SwingConstants.CENTER);
+        
         logoText.setFont(new Font("SansSerif", Font.BOLD, 20));
         logoText.setForeground(new Color(60, 60, 60));
         leftPanel.setLayout(new GridBagLayout());
@@ -36,18 +55,35 @@ public class LoginPanel {
 
         container.add(leftPanel, BorderLayout.WEST);
 
-        
+
         JPanel rightPanel = new JPanel();
         rightPanel.setBackground(Color.WHITE);
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setBorder(new EmptyBorder(20, 40, 20, 40));
 
         
+        // --- Muat icon profil ---
+        ImageIcon profileIcon = null;
+        try {
+            ImageIcon tempIcon = new ImageIcon(getClass().getResource("profile_icon.png"));
+            Image image = tempIcon.getImage();
+            Image resizedImage = image.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            profileIcon = new ImageIcon(resizedImage);
+        } catch (Exception e) {
+            System.err.println("Gagal memuat gambar profile_icon.png");
+            e.printStackTrace();
+        }
+
         JLabel profileCircle = new JLabel();
+
+        if (profileIcon != null) {
+            profileCircle.setIcon(profileIcon);
+        }
+        
         profileCircle.setPreferredSize(new Dimension(100, 100));
         profileCircle.setAlignmentX(Component.CENTER_ALIGNMENT);
         profileCircle.setOpaque(false);
-        profileCircle.setBorder(BorderFactory.createLineBorder(new Color(83, 156, 204), 3));
+        // profileCircle.setBorder(BorderFactory.createLineBorder(new Color(83, 156, 204), 3)); // <-- BARIS INI DIHAPUS
         profileCircle.setMaximumSize(new Dimension(100, 100));
 
         rightPanel.add(Box.createVerticalStrut(10));

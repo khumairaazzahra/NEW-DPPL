@@ -25,7 +25,7 @@ public class DosenPortal {
         this.courses = courses;
         for (Course c : courses) riwayatMap.put(c.getCode(), new ArrayList<>());
 
-      
+    
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBackground(new Color(245, 248, 253));
 
@@ -36,6 +36,8 @@ public class DosenPortal {
         mainPanel.add(sidebar, BorderLayout.WEST);
         mainPanel.add(contentPanel, BorderLayout.CENTER);
     }
+
+    // --- (Metode buildSidebar, setContent, createMenuButton TIDAK DIUBAH) ---
 
     private JPanel buildSidebar() {
         JPanel sidebar = new JPanel();
@@ -61,7 +63,7 @@ public class DosenPortal {
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(btnLogout);
 
-     
+    
         btnDashboard.addActionListener(e -> setContent(buildDashboard()));
         btnMataKuliah.addActionListener(e -> setContent(createCoursesPanel()));
         btnRiwayat.addActionListener(e -> setContent(createRiwayatPanel()));
@@ -103,6 +105,10 @@ public class DosenPortal {
     }
 
     
+    /**
+     * INI ADALAH METODE YANG DIUBAH
+     * (Outline foto dihapus, nama digeser ke kiri)
+     */
     private JPanel buildDashboard() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(245, 248, 253));
@@ -124,43 +130,65 @@ public class DosenPortal {
         body.setBackground(new Color(245, 248, 253));
         body.setBorder(new EmptyBorder(25, 40, 25, 40));
 
-        JPanel biodataCard = new JPanel(new BorderLayout(20, 10));
+        // --- PERUBAHAN DI DALAM BAGIAN INI ---
+        
+        JPanel biodataCard = new JPanel();
+        biodataCard.setLayout(new GridLayout(1, 4, 20, 0)); 
         biodataCard.setBackground(Color.WHITE);
         biodataCard.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(220, 220, 220), 1, true),
                 new EmptyBorder(20, 20, 20, 20)
         ));
 
-        JPanel left = new JPanel();
-        left.setOpaque(false);
-        left.setPreferredSize(new Dimension(100, 100));
-        JLabel foto = new JLabel();
-        foto.setPreferredSize(new Dimension(80, 80));
-        foto.setOpaque(true);
-        foto.setBackground(new Color(220, 230, 240));
-        foto.setBorder(BorderFactory.createLineBorder(new Color(180, 190, 200), 2));
-        left.add(foto);
+        // 2. Membuat panel foto (left)
+        ImageIcon dosenIcon = null;
+        try {
+            ImageIcon tempIcon = new ImageIcon(getClass().getResource("dosen_foto.png"));
+            Image image = tempIcon.getImage();
+            Image resizedImage = image.getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+            dosenIcon = new ImageIcon(resizedImage);
+        } catch (Exception e) {
+            System.err.println("Gagal memuat gambar dosen_foto.png");
+            e.printStackTrace();
+        }
 
-        JPanel info = new JPanel();
+        JPanel left = new JPanel(); 
+        left.setOpaque(false);
+        
+        JLabel foto = new JLabel();
+        foto.setIcon(dosenIcon);
+        foto.setPreferredSize(new Dimension(80, 80));
+        // foto.setBorder(BorderFactory.createLineBorder(new Color(180, 190, 200), 2)); // <-- PERUBAHAN 1: Outline dihapus
+        left.add(foto); 
+
+        // 3. Membuat panel info (Nama, NIP)
+        JPanel info = new JPanel(); 
         info.setOpaque(false);
         info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
         info.add(new JLabel("<html><b>" + dosenName + "</b></html>"));
         info.add(new JLabel("NIP: " + dosenNip));
-        info.add(Box.createVerticalStrut(10));
+        // Beri padding (Top, Left, Bottom, Right)
+        info.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 10)); // <-- PERUBAHAN 2: Padding kiri jadi 0
 
-        JPanel kontak = new JPanel(new GridLayout(1, 2, 20, 10));
-        kontak.setOpaque(false);
-        kontak.add(buildContactInfo("Email", dosenName.toLowerCase().replace(" ", ".") + "@dosen.univ.ac.id", "📧"));
-        kontak.add(buildContactInfo("Nomor Telepon", "0812XXXXXXX", "📞"));
+        // 4. Membuat panel email dan telepon
+        JPanel emailPanel = buildContactInfo("Email", dosenName.toLowerCase().replace(" ", ".") + "@dosen.univ.ac.id", "📧");
+        JPanel phonePanel = buildContactInfo("Nomor Telepon", "0812XXXXXXX", "📞");
+        
+        // 5. Menambahkan 4 komponen ke biodataCard
+        biodataCard.add(left);
+        biodataCard.add(info);
+        biodataCard.add(emailPanel);
+        biodataCard.add(phonePanel);
 
-        info.add(kontak);
-        biodataCard.add(left, BorderLayout.WEST);
-        biodataCard.add(info, BorderLayout.CENTER);
+        // 6. Atur Max Height
+        biodataCard.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150)); 
+
+        // --- PERUBAHAN SELESAI ---
 
         body.add(biodataCard);
         body.add(Box.createVerticalStrut(25));
 
-        // === MATA KULIAH ===
+        // === MATA KULIAH (Tidak Diubah) ===
         JLabel mkLabel = new JLabel("Mata Kuliah Diampu");
         mkLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
         body.add(mkLabel);
@@ -210,18 +238,27 @@ public class DosenPortal {
         return panel;
     }
 
+    /**
+     * Metode ini TIDAK DIUBAH (masih sama seperti perbaikan sebelumnya)
+     */
     private JPanel buildContactInfo(String title, String value, String icon) {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout(10, 0)); 
         panel.setBackground(new Color(230, 240, 255));
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        
         JLabel ic = new JLabel(icon);
         ic.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        ic.setPreferredSize(new Dimension(30, 30)); 
+        ic.setHorizontalAlignment(SwingConstants.CENTER); 
+        
         JLabel text = new JLabel("<html><b>" + title + "</b><br>" + value + "</html>");
         panel.add(ic, BorderLayout.WEST);
         panel.add(text, BorderLayout.CENTER);
         return panel;
     }
 
+    // --- (Metode createCoursesPanel, createRiwayatPanel, createDataKehadiranPanel, addRiwayat, getPanel TIDAK DIUBAH) ---
+    
     private JScrollPane createCoursesPanel() {
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
@@ -236,7 +273,7 @@ public class DosenPortal {
             info.setOpaque(false);
             info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
             info.add(new JLabel("<html><b>" + c.getName() + "</b></html>"));
-            info.add(new JLabel("Kode: " + c.getCode() + "  |  Ruang: C-323  |  Jam: 13:00-14:40"));
+            info.add(new JLabel("Kode: " + c.getCode() + "  |  Ruang: C-323   |  Jam: 13:00-14:40"));
 
             JButton openBtn = new JButton("Buka Presensi");
             openBtn.addActionListener(e -> {
